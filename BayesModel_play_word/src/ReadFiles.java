@@ -128,6 +128,7 @@ public class ReadFiles {
 		return sentenceToActions;
 	}
 
+	// read the inputdata files
 	public ArrayList<String> readInputData(String textFile, StudentLogData student) {
 		BufferedReader fileReader;
 		String line = "";
@@ -140,15 +141,26 @@ public class ReadFiles {
 				if (line.isEmpty() || line.contains(","))
 					continue;
 				// line = fileReader.readLine();
-				if (!line.isEmpty() && !line.contains(",")) {
+				if (!line.isEmpty() && !line.contains(",") && !line.contains(Constants.AUDIO_E)) { // the coordinates
+																									// contain comma, so
+																									// don't add that,
+																									// also differnt
+																									// case for audio
+																									// words
 					// System.out.println("1 = " + line);
 					entry += line.trim() + Constants.STUDENT_INPUT_DATA_SEPARATOR;
+				} else if (line.contains(Constants.AUDIO_FILE_ENDING)) {
+					entry = line.split(Constants.AUDIO_FILE_ENDING)[0];
+					System.out.println("entry1= " + entry);
 				}
 				line = fileReader.readLine();
 				line = fileReader.readLine();
-				if (!line.isEmpty() && !line.contains(",")) {
+				if (!line.isEmpty() && !line.contains(",") && !line.contains(Constants.AUDIO_E)) {
 					// System.out.println("2 = " + line);
 					entry += line.trim();
+				} else if (line.contains(Constants.AUDIO_FILE_ENDING)) {
+					entry = line.split(Constants.AUDIO_FILE_ENDING)[0];
+					System.out.println("entry2= " + entry); // never comes here
 				}
 				inputData.add(entry);
 				// System.out.println("added " + entry);
