@@ -28,6 +28,10 @@ public class ReadFiles {
 					for (String token : tokens) {
 						token = token.trim();
 					}
+					if (tokens[0].equals("Computer") // don't add computer move actions
+							&& (tokens[1].equals(Constants.MOVE_TO_HOTSPOT) || tokens[1]
+									.equals(Constants.MOVE_TO_OBJECT)))
+						continue;
 					actionList.add(tokens[1]);
 					verificationList.add(tokens[2]);
 					sentenceList.add(tokens[3]);
