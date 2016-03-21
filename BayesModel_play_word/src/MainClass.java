@@ -9,42 +9,7 @@ public class MainClass {
 		ReadFiles reader = new ReadFiles();
 		// read properties file into LinkedHashMap
 		InitMaps initMaps = reader.readPropertiesFile(Constants.WORDS_FILE, Constants.ACTION_FILE);
-		// InitMaps initMaps = reader.readPropertiesFile("the_contest_sentences.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("getting_ready.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("who_is_the_best_animal.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("combined.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("everyone_helps.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("the_wise_owl.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("the_best_farm_award.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("everyone_helps_actions.properties");
-		// InitMaps initMaps = reader.readPropertiesFile("cleaning_up_actions.properties");
 		// read log data into StudentModel
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_the_contest.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_getting_ready.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_who_is_the_best_animal.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_chapters_1_3.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_chapters_1_4.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_the_wise_owl.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_chapters_1_5.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_everyone_helps.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_chapters_1_6.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_the_best_farm_award.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log_data_B0039EE_chapters_1_6.csv");
-		// StudentLogData studentLogData = reader
-		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log data by student\\log_data_B009BE.csv");
 		// StudentLogData studentLogData = reader
 		// .readLogData("C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log data by student\\log_data_B0038EE_chapters_1_7.csv");
 		StudentLogData studentLogData = reader.readLogData(Constants.STUDENT_LOG_DATA);
@@ -90,7 +55,7 @@ public class MainClass {
 		}
 
 		// if (!wordList.isEmpty() || !(wordList == null)) {
-		if (!allWordsList.isEmpty() || !(allWordsList == null)) { // add each unique word as a skill in skillMap in
+		if (!allWordsList.isEmpty() && !(allWordsList == null)) { // add each unique word as a skill in skillMap in
 																	// skillSet
 			// for (String word : wordList) {
 			for (String word : allWordsList) {
@@ -104,6 +69,14 @@ public class MainClass {
 				skillList.add(skill);
 				skillMap.put(word, skillList);
 			}
+			// add syntax as a skill
+			Skill skill = new Skill();
+			skill.setWord(Constants.SYNTAX);
+			skill.setAction(Constants.DEFAULT_ACTION);
+			skill.setSkillValue(Constants.INITIAL_SKILL_VALUE);
+			ArrayList<Skill> skillList = new ArrayList<Skill>();
+			skillList.add(skill);
+			skillMap.put(Constants.SYNTAX, skillList);
 			// }
 			// skillMap.put(sentence, new ArrayList<Skill>());
 		}
