@@ -23,17 +23,19 @@ public class ProcessLogData {
 		String prevSentence = "";
 		Integer prevUserStep = 0;
 		for (int i = 0; i < student.getSentenceList().size(); i++) {
-			if (!prevSentence.equals(student.getSentenceList().get(i)) || prevUserStep != student.getUserStep().get(i)) {
+			// first two conditions only applies to move actions, but we want all play word actions
+			if (!prevSentence.equals(student.getSentenceList().get(i)) || prevUserStep != student.getUserStep().get(i)
+					|| student.getActionList().get(i).equals(Constants.PLAY_WORD)) {
 				// if not equal to previous then add
 				verificationListNew.add(student.getVerificationList().get(i));
 				actionListNew.add(student.getActionList().get(i));
 				sentenceListNew.add(student.getSentenceList().get(i));
 				userStepNew.add(student.getUserStep().get(i));
-				System.out.println("input data size=" + student.getInputData().size());
+				// System.out.println("input data size=" + student.getInputData().size());
 				inputDataNew.add(student.getInputData().get(i));
 
-				System.out.println("added step " + student.getUserStep().get(i) + "of sentence "
-						+ student.getSentenceList().get(i));
+				// System.out.println("added step " + student.getUserStep().get(i) + "of sentence "
+				// + student.getSentenceList().get(i));
 			}
 			prevSentence = student.getSentenceList().get(i);
 			prevUserStep = student.getUserStep().get(i);
@@ -73,7 +75,7 @@ public class ProcessLogData {
 			Integer currUserStep = student.getUserStep().get(i);
 			String currInputData = student.getInputData().get(i);
 			// you have the first attempt
-			// add the data at point i wordsInSentence number of times
+			// add the data wordsInSentence number of times
 
 			// j = 0;
 			// while (j < initMaps.getSentenceToActions().get(AnalysisUtil.convertStringToKey(currSentence)).size()) {
@@ -81,26 +83,31 @@ public class ProcessLogData {
 			// the
 			// steps
 			k = 0;
-			while (k < initMaps.getSentenceToActions().get(AnalysisUtil.convertStringToKey(currSentence))
-					.get(currUserStep - 1).size()) {
-				// for (int j = 0; j < (wordsInSentence.size() - 1); j++) {
-				// System.out.println("k=" + k);
-				// add at i th position, k times
+			// <= added = for syntax as a skill
+			if (!currAction.equals(Constants.PLAY_WORD)) {
+				while (k <= initMaps.getSentenceToActions().get(AnalysisUtil.convertStringToKey(currSentence))
+						.get(currUserStep - 1).size()) {
+					// for (int j = 0; j < (wordsInSentence.size() - 1); j++) {
+					// System.out.println("k=" + k);
+					// add at i th position, k times
+					sentenceListNew.add(currSentence);
+					verificationListNew.add(currVerification);
+					actionListNew.add(currAction);
+					userStepNew.add(currUserStep);
+					// inputDataNew.add(i, currInputData);
+					inputDataNew.add(currInputData);
+					System.out.println("repeated step " + currUserStep + "of sentence " + currSentence + " for word "
+							+ currInputData);
+					k++;
+				}
+			} else { // add play word only once
 				sentenceListNew.add(currSentence);
 				verificationListNew.add(currVerification);
 				actionListNew.add(currAction);
 				userStepNew.add(currUserStep);
-				// inputDataNew.add(i, currInputData);
 				inputDataNew.add(currInputData);
-				// inputDataNew.add(i, currInputData);
-				// System.out.println("repeated step "
-				// + currUserStep
-				// + "of sentence "
-				// + currSentence
-				// + " for word "
-				// + initMaps.getSentenceToActions().get(AnalysisUtil.convertStringToKey(currSentence))
-				// .get(currUserStep - 1).get(k));
-				k++;
+				System.out.println("play word step " + currUserStep + "of sentence " + currSentence + " for word "
+						+ currInputData);
 			}
 			// }
 			// }
@@ -112,7 +119,8 @@ public class ProcessLogData {
 		student.setInputData(inputDataNew);
 		System.out.println("final attempt=" + Arrays.toString(student.getSentenceList().toArray()));
 		System.out.println("final attempt=" + Arrays.toString(student.getInputData().toArray()));
-		// System.out.println("final attempt=" + Arrays.toString(student.getVerificationList().toArray()));
-		// System.out.println("final attempt=" + student.getVerificationList().size());
+		System.out.println("final attempt=" + Arrays.toString(student.getVerificationList().toArray()));
+		System.out.println("final attempt=" + student.getVerificationList().size());
+		System.out.println("final attempt=" + student.getInputData().size());
 	}
 }
