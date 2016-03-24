@@ -23,19 +23,25 @@ public class KnowledgeTracer2 {
 		skillMap = skillSet.getSkillMap();
 		// temporary variables
 		String currSentence = "";
+		String currAction = "";
 		String word1 = "";
+		ArrayList<String> playWords = new ArrayList<String>();
 		// initialize wordToValueMap so that the last skill value of the word is stored
 		for (String word : skillMap.keySet()) {
 			wordToValueMap.put(word, skillMap.get(word).get(0));
 			// System.out.println("wordToValue " + word);
 		}
+		// add syntax to wordToValue
+		wordToValueMap.put(Constants.SYNTAX, skillMap.get(Constants.SYNTAX).get(0));
 		System.out.println(wordToValueMap);
 		for (int i = 0; i < studentLogData.getVerificationList().size(); i++) {
-			// get the current sentence
+			// get the current sentence and action
 			currSentence = studentLogData.getSentenceList().get(i);
+			currAction = studentLogData.getActionList().get(i);
 			// update only for the first attempt of every step
 			if (!(prevSentence.equalsIgnoreCase(currSentence) && (prevUserStep == studentLogData.getUserStep().get(i)
-					.intValue()))) {
+					.intValue()))
+					&& currAction.equals(Constants.PLAY_WORD)) {
 				System.out.println("entered for step " + studentLogData.getUserStep().get(i) + " for sentence "
 						+ currSentence);
 				// get the first(or any) word from the current sentence and its skill value
@@ -48,14 +54,20 @@ public class KnowledgeTracer2 {
 					if (studentLogData.getVerificationList().get(i).equals(Constants.CORRECT)) {
 						// if correct, one by one increment all skills
 						HashMap<String, Boolean> wordToVerif = checkIncorrectSkill2(studentLogData, initMaps, i);
-						// for (String wordSkill : initMaps.getSentenceToWords().keySet()) {
+						System.out.println(wordToVerif);
 						for (String wordSkill : wordToVerif.keySet()) {
 							// System.err.println("wordToVerif" + wordToVerif);
 							prevSkillValue = wordToValueMap.get(wordSkill).getSkillValue();
-							skillEvaluated = this.calcCorrect(studentLogData, prevSkillValue);
+							// change skills differently if they are in playWords list
+							if (playWords.contains(wordSkill))
+								skillEvaluated = this.calcCorrectPlayWord(studentLogData, prevSkillValue);
+							else
+								skillEvaluated = this.calcCorrect(studentLogData, prevSkillValue);
 							newSkill = calcNewSkillValue(studentLogData, skillEvaluated);
 							updateSkills(studentLogData, newSkill, wordSkill, i);
 						}
+						// clear all entries in playWords
+						playWords.clear();
 					}
 					// if incorrect
 					else if (studentLogData.getVerificationList().get(i).equals(Constants.INCORRECT)) {
@@ -69,11 +81,19 @@ public class KnowledgeTracer2 {
 																			// not skills
 								if (wordToVerif.get(word)) {
 									prevSkillValue = wordToValueMap.get(word).getSkillValue();
-									skillEvaluated = this.calcCorrect(studentLogData, prevSkillValue);
+									// skillEvaluated = this.calcCorrect(studentLogData, prevSkillValue);
+									if (playWords.contains(word))
+										skillEvaluated = this.calcCorrectPlayWord(studentLogData, prevSkillValue);
+									else
+										skillEvaluated = this.calcCorrect(studentLogData, prevSkillValue);
 									// System.out.println("in incorrect correct " + word);
 								} else {
 									prevSkillValue = wordToValueMap.get(word).getSkillValue();
-									skillEvaluated = this.calcIncorrect(studentLogData, prevSkillValue);
+									// skillEvaluated = this.calcIncorrect(studentLogData, prevSkillValue);
+									if (playWords.contains(word))
+										skillEvaluated = this.calcIncorrectPlayWord(studentLogData, prevSkillValue);
+									else
+										skillEvaluated = this.calcIncorrect(studentLogData, prevSkillValue);
 									// System.out.println("in incorrect incorrect " + word);
 								}
 								newSkill = calcNewSkillValue(studentLogData, skillEvaluated);
@@ -82,6 +102,11 @@ public class KnowledgeTracer2 {
 								System.out.println("updated incorrect");
 							}
 						}
+						// clear all entries in playWords
+						playWords.clear();
+					} else {
+						// verification is empty. which means play word action
+						playWords.add(studentLogData.getInputData().get(i));
 					}
 				}
 			} else {
@@ -89,7 +114,6 @@ public class KnowledgeTracer2 {
 				continue;
 			}
 		}
-		ArrayList<Skill> s;
 		skillSet1.setSkillMap(skillMap);
 		return skillSet1;
 	}
@@ -103,6 +127,20 @@ public class KnowledgeTracer2 {
 	}
 
 	private double calcIncorrect(StudentLogData student, double prevSkillValue) {
+
+		return (prevSkillValue * student.getSlip())
+				/ ((student.getSlip() * prevSkillValue) + ((1 - student.getGuess()) * (1 - prevSkillValue)));
+
+	}
+
+	private double calcCorrectPlayWord(StudentLogData student, double prevSkillValue) {
+
+		return (prevSkillValue * (1 - student.getSlip()))
+				/ (prevSkillValue * (1 - student.getSlip()) + (1 - prevSkillValue) * student.getGuess());
+
+	}
+
+	private double calcIncorrectPlayWord(StudentLogData student, double prevSkillValue) {
 
 		return (prevSkillValue * student.getSlip())
 				/ ((student.getSlip() * prevSkillValue) + ((1 - student.getGuess()) * (1 - prevSkillValue)));
@@ -138,14 +176,18 @@ public class KnowledgeTracer2 {
 		String objectsMoved[] = student.getInputData().get(count).split(Constants.STUDENT_INPUT_DATA_SEPARATOR);
 		System.err.println("objects moved " + Arrays.toString(objectsMoved));
 		String currSentence = student.getSentenceList().get(count);
+		// List of correct words for that step
 		ArrayList<String> actionWords = initMaps.getSentenceToActions()
 				.get(AnalysisUtil.convertStringToKey(currSentence)).get(student.getUserStep().get(count) - 1);
+
 		System.err.println(currSentence);
 		System.err.println("actionWrods "
 				+ initMaps.getSentenceToActions().get(AnalysisUtil.convertStringToKey(currSentence))
 						.get(student.getUserStep().get(count) - 1));
 		// String currSentence = student.getSentenceList().get(count);
 		HashMap<String, Boolean> wordToVerif = new HashMap<String, Boolean>();
+		// add syntax to wordToVerif defalut false
+		wordToVerif.put(Constants.SYNTAX, false);
 		// case for pen
 		for (int i = 0; i < objectsMoved.length; i++) {
 			if (objectsMoved[i].contains("pen2")) {
@@ -167,10 +209,27 @@ public class KnowledgeTracer2 {
 				// System.out.println("action word=" + actionWords.get(i));
 				// System.out.println("ojbjeys moved=" + objectsMoved[i]);
 				wordToVerif.put(actionWords.get(i), true);
+				// understood everything about the sentence including syntax
+				// wordToVerif.put(Constants.SYNTAX, true);
 			} else {
 				wordToVerif.put(actionWords.get(i), false);
+				if (actionWords.contains(objectsMoved[i])) {
+					// if the students moved the correct words in the wrong order
+					// wordToVerif.put(Constants.SYNTAX, true);
+				}
 			}
 		}
+		// check if all words in actionWords are presetn in objectsMoved
+		boolean flag = false;
+		for (int i = 0; i < actionWords.size(); i++) {
+			if (actionWords.contains(objectsMoved[i])) {
+				flag = true;
+			} else {
+				flag = false;
+				break;
+			}
+		}
+		wordToVerif.put(Constants.SYNTAX, flag);
 		return wordToVerif;
 	}
 }
