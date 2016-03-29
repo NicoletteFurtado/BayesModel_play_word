@@ -32,10 +32,12 @@ public class ReadFiles {
 							&& (tokens[1].equals(Constants.MOVE_TO_HOTSPOT) || tokens[1]
 									.equals(Constants.MOVE_TO_OBJECT)))
 						continue;
-					actionList.add(tokens[1]);
-					verificationList.add(tokens[2]);
-					sentenceList.add(tokens[3]);
-					userStep.add(Integer.valueOf(tokens[4]));
+					else {
+						actionList.add(tokens[1]);
+						verificationList.add(tokens[2]);
+						sentenceList.add(tokens[3]);
+						userStep.add(Integer.valueOf(tokens[4]));
+					}
 				}
 			}
 			fileReader.close();
