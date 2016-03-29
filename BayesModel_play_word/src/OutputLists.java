@@ -39,8 +39,8 @@ public class OutputLists {
 				sentenceList.add(initMaps.getSentenceToText().get(sentenceKey));
 			}
 		}
-		System.out.println("done with sentence");
-		System.out.println(sentenceList.size());
+		// System.out.println("done with sentence");
+		// System.out.println(sentenceList.size());
 	}
 
 	private void createWordList(StudentLogData student, SkillSet skillSet, InitMaps initMaps) {
@@ -53,15 +53,20 @@ public class OutputLists {
 					wordList.add(wordsInSentence.get(i));
 				}
 			}
+			// add syntax as a word
+			// wordList.add(Constants.SYNTAX);
 		}
-		System.out.println("Done with words");
+		// add syntax as a word
+		wordList.add(Constants.SYNTAX);
+		// System.out.println("word list1=" + Arrays.toString(wordList.toArray()));
+		// System.out.println("Done with words");
 	}
 
 	private void createSkillList(StudentLogData student, SkillSet skillSet, InitMaps initMaps) {
 		String sentence = "";
 		String sentenceKey = "";
 		ArrayList<Skill> skillObjectList;
-		System.out.println(Arrays.toString(wordList.toArray()));
+		System.out.println("word list2=" + Arrays.toString(wordList.toArray()));
 		if (!(wordList.isEmpty()) || !(wordList == null)) {
 			for (int i = 0; i < wordList.size(); i++) {
 				// put word in map if not contains
@@ -70,16 +75,16 @@ public class OutputLists {
 					// System.out.println(wordList.get(i));
 				}
 			}
+			// add syntax as a word
+			// wordToSkillValues.put(Constants.SYNTAX, new ArrayList<Double>());
 			// pad values if necessary
 			double mostRecentValue = Constants.INITIAL_SKILL_VALUE;
-			double skillValue = 0.0;
-			int targetIndex = 0;
 			ArrayList<String> sentenceForAWord;
 			// System.out.println("/////////" + skillSet.getSkillMap().keySet());
 			for (String word : skillSet.getSkillMap().keySet()) {
 				// mostRecentValue = Constants.INITIAL_SKILL_VALUE;
-				skillValue = 0.0;
-				targetIndex = 0;
+				// skillValue = 0.0;
+				// targetIndex = 0;
 
 				System.out.println(word);
 
@@ -106,6 +111,7 @@ public class OutputLists {
 				// System.out.println(word);
 				// System.out.println(Arrays.toString(skillObjectList.toArray()));
 				// for (int i = 0; i < student.getSentenceList().size() + 1;) {
+				// System.out.println("word= " + word);
 				wordToSkillValues.get(word).add(mostRecentValue);
 				while (i < (sentenceList.size()) && wordToSkillValues.get(word).size() <= sentenceList.size()) {
 					// System.out.println(skillObjectList.get(skillObjectListIndex).getSentence());
@@ -134,9 +140,9 @@ public class OutputLists {
 					}
 					// i = i + 1;
 				}
-				System.out.println(word);
-				System.out.println(Arrays.toString(wordToSkillValues.get(word).toArray()));
-				System.out.println(wordToSkillValues.get(word).size());
+				// System.out.println(word);
+				// System.out.println(Arrays.toString(wordToSkillValues.get(word).toArray()));
+				// System.out.println(wordToSkillValues.get(word).size());
 			}
 		}
 
