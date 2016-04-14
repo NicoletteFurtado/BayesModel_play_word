@@ -11,7 +11,11 @@ public class StudentLogData {
 	// ////
 	private double guess = 0.1; // 0.25 //0.6
 	private double transition = 0.1; // 0.1 //0.7 //0.4
-	private double slip = 0.1; // 0.4 //0.1
+	private double slip = 0.2; // 0.4 //0.1
+
+	private double guess2 = 0.3; // 0.25 //0.6
+	private double transition2 = 0.1; // 0.1 //0.7 //0.4
+	private double slip2 = 0.1; // 0.4 //0.1
 
 	public ArrayList<String> getActionList() {
 		return actionList;
@@ -83,6 +87,30 @@ public class StudentLogData {
 
 	public void setUserStepRepeated(ArrayList<String> userStepRepeated) {
 		this.userStepRepeated = userStepRepeated;
+	}
+
+	public double getGuess2() {
+		return guess2;
+	}
+
+	public void setGuess2(double guess2) {
+		this.guess2 = guess2;
+	}
+
+	public double getTransition2() {
+		return transition2;
+	}
+
+	public void setTransition2(double transition2) {
+		this.transition2 = transition2;
+	}
+
+	public double getSlip2() {
+		return slip2;
+	}
+
+	public void setSlip2(double slip2) {
+		this.slip2 = slip2;
 	}
 
 }
