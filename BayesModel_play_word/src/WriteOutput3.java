@@ -8,29 +8,7 @@ import java.util.Map;
 public class WriteOutput3 {
 	public void writeCSV(OutputLists outputLists, StudentLogData student) {
 		BufferedWriter writer = null;
-		// String outputFile = "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\output_2016_new.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_the_contest.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_best_farm_chapters_1_3.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_who_is_the_best_animal.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_best_farm_getting_ready.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_best_farm_chapters_1_4.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_the_wise_owl.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_chapters_1_5.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_everyone_helps.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_chapters_1_6.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_the_best_farm_award.csv";
-		// String outputFile =
-		// "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\output_2016_chapters_1_7.csv";
+
 		String outputFile = Constants.OUTPUT_FILE;
 		try {
 			FileWriter fw = new FileWriter(outputFile);
@@ -39,6 +17,8 @@ public class WriteOutput3 {
 			// write the word lists
 			writer.write(Constants.CSV_FILE_SEPARATOR);
 			writer.write(Constants.CSV_FILE_SEPARATOR);
+			writer.write(Constants.CSV_FILE_SEPARATOR);
+			// for object moved
 			writer.write(Constants.CSV_FILE_SEPARATOR);
 			for (String word : outputLists.getWordList()) {
 				writer.write(word + Constants.CSV_FILE_SEPARATOR);
@@ -54,6 +34,7 @@ public class WriteOutput3 {
 			// for the first row where there is no sentence just initial skill value
 			int i = 0; // sentencelist index
 			int j = 0; // wordtoskill index
+			rowList.add(Constants.EMPTY_STRING);
 			rowList.add(Constants.EMPTY_STRING);
 			rowList.add(Constants.EMPTY_STRING);
 			rowList.add(Constants.EMPTY_STRING);
@@ -81,6 +62,7 @@ public class WriteOutput3 {
 				rowList.add(outputLists.getSentenceList().get(i));
 				rowList.add(student.getVerificationList().get(i));
 				rowList.add(student.getUserStep().get(i).toString());
+				rowList.add(student.getInputData().get(i).toString());
 				for (String key : outputLists.getWordToSkillValues().keySet()) {
 					rowList.add(outputLists.getWordToSkillValues().get(key).get(j).toString());
 				}
