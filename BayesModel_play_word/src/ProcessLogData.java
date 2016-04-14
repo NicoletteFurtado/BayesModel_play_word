@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ProcessLogData {
 
@@ -22,10 +21,12 @@ public class ProcessLogData {
 
 		String prevSentence = "";
 		Integer prevUserStep = 0;
+		String prevAction = "";
 		for (int i = 0; i < student.getSentenceList().size(); i++) {
 			// first two conditions only applies to move actions, but we want all play word actions
 			if (!prevSentence.equals(student.getSentenceList().get(i)) || prevUserStep != student.getUserStep().get(i)
-					|| student.getActionList().get(i).equals(Constants.PLAY_WORD)) {
+					|| student.getActionList().get(i).equals(Constants.PLAY_WORD)
+					|| prevAction.equals(Constants.PLAY_WORD)) {
 				// if not equal to previous then add
 				verificationListNew.add(student.getVerificationList().get(i));
 				actionListNew.add(student.getActionList().get(i));
@@ -39,6 +40,7 @@ public class ProcessLogData {
 			}
 			prevSentence = student.getSentenceList().get(i);
 			prevUserStep = student.getUserStep().get(i);
+			prevAction = student.getActionList().get(i);
 		}
 		student.setVerificationList(verificationListNew);
 		student.setActionList(actionListNew);
@@ -47,10 +49,10 @@ public class ProcessLogData {
 		student.setInputData(inputDataNew);
 		UPDATED_lIST_SIZE = sentenceListNew.size();
 		// System.out.println("first attempt=" + Arrays.toString(student.getUserStep().toArray()));
-		System.out.println("first attempt=" + student.getVerificationList().size());
-		System.out.println("first attempt input data=" + student.getInputData().size());
-		System.out.println("first attempt=" + Arrays.toString(student.getInputData().toArray()));
-		System.out.println("first attempt=" + Arrays.toString(student.getSentenceList().toArray()));
+		// System.out.println("first attempt=" + student.getVerificationList().size());
+		// System.out.println("first attempt input data=" + student.getInputData().size());
+		// System.out.println("first attempt=" + Arrays.toString(student.getInputData().toArray()));
+		// System.out.println("first attempt=" + Arrays.toString(student.getSentenceList().toArray()));
 	}
 
 	public void repeatAttempts2(StudentLogData student, InitMaps initMaps) {
@@ -96,8 +98,8 @@ public class ProcessLogData {
 					userStepNew.add(currUserStep);
 					// inputDataNew.add(i, currInputData);
 					inputDataNew.add(currInputData);
-					System.out.println("repeated step " + currUserStep + "of sentence " + currSentence + " for word "
-							+ currInputData);
+					// System.out.println("repeated step " + currUserStep + "of sentence " + currSentence + " for word "
+					// + currInputData);
 					k++;
 				}
 			} else { // add play word only once
@@ -106,8 +108,8 @@ public class ProcessLogData {
 				actionListNew.add(currAction);
 				userStepNew.add(currUserStep);
 				inputDataNew.add(currInputData);
-				System.out.println("play word step " + currUserStep + "of sentence " + currSentence + " for word "
-						+ currInputData);
+				// System.out.println("play word step " + currUserStep + "of sentence " + currSentence + " for word "
+				// + currInputData);
 			}
 			// }
 			// }
@@ -117,10 +119,10 @@ public class ProcessLogData {
 		student.setSentenceList(sentenceListNew);
 		student.setUserStep(userStepNew);
 		student.setInputData(inputDataNew);
-		System.out.println("final attempt=" + Arrays.toString(student.getSentenceList().toArray()));
-		System.out.println("final attempt=" + Arrays.toString(student.getInputData().toArray()));
-		System.out.println("final attempt=" + Arrays.toString(student.getVerificationList().toArray()));
-		System.out.println("final attempt=" + student.getVerificationList().size());
-		System.out.println("final attempt=" + student.getInputData().size());
+		// System.out.println("final attempt=" + Arrays.toString(student.getSentenceList().toArray()));
+		// System.out.println("final attempt=" + Arrays.toString(student.getInputData().toArray()));
+		// System.out.println("final attempt=" + Arrays.toString(student.getVerificationList().toArray()));
+		// System.out.println("final attempt=" + student.getVerificationList().size());
+		// System.out.println("final attempt=" + student.getInputData().size());
 	}
 }
