@@ -144,15 +144,18 @@ public class ReadFiles {
 			fileReader = new BufferedReader(new FileReader(textFile));
 			fileReader.readLine();
 			while ((line = fileReader.readLine()) != null) {
-				if (line.isEmpty() || line.contains(","))
+				line = line.trim();
+				if (line != null && line.isEmpty() || line.contains(",") || line.equals(Constants.CORRECT)
+						|| line.equals(Constants.INCORRECT))
 					continue;
 				// line = fileReader.readLine();
-				if (!line.isEmpty() && !line.contains(",") && !line.contains(Constants.AUDIO_E)) { // the coordinates
-																									// contain comma, so
-																									// don't add that,
-																									// also differnt
-																									// case for audio
-																									// words
+				if (line != null && !line.isEmpty() && !line.contains(",") && !line.contains(Constants.AUDIO_E)
+						&& !line.equals(Constants.CORRECT) && !line.equals(Constants.INCORRECT)) { // the coordinates
+					// contain comma, so
+					// don't add that,
+					// also differnt
+					// case for audio
+					// words
 					// System.out.println("1 = " + line);
 					entry += line.trim() + Constants.STUDENT_INPUT_DATA_SEPARATOR;
 				} else if (line.contains(Constants.AUDIO_FILE_ENDING)) {
@@ -161,10 +164,12 @@ public class ReadFiles {
 				}
 				line = fileReader.readLine();
 				line = fileReader.readLine();
-				if (!line.isEmpty() && !line.contains(",") && !line.contains(Constants.AUDIO_E)) {
+				// System.out.println("////// " + line);
+				if (line != null && !line.isEmpty() && !line.contains(",") && !line.contains(Constants.AUDIO_E)
+						&& !line.equals(Constants.CORRECT) && !line.equals(Constants.INCORRECT)) {
 					// System.out.println("2 = " + line);
 					entry += line.trim();
-				} else if (line.contains(Constants.AUDIO_FILE_ENDING)) {
+				} else if (line != null && line.contains(Constants.AUDIO_FILE_ENDING)) {
 					entry = line.split(Constants.AUDIO_FILE_ENDING)[0];
 					System.out.println("entry2= " + entry); // never comes here
 				}
