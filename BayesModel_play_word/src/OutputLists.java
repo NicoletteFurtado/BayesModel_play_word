@@ -23,7 +23,8 @@ public class OutputLists {
 		// create sentence list
 		createSentenceList(student, initMaps);
 		// create skill list
-		createSkillList(student, skillSet, initMaps);
+		// createSkillList(student, skillSet, initMaps);
+		createSkillList3(student, skillSet, initMaps);
 		System.out.println("donee");
 	}
 
@@ -82,10 +83,6 @@ public class OutputLists {
 			ArrayList<String> sentenceForAWord;
 			// System.out.println("/////////" + skillSet.getSkillMap().keySet());
 			for (String word : skillSet.getSkillMap().keySet()) {
-				// mostRecentValue = Constants.INITIAL_SKILL_VALUE;
-				// skillValue = 0.0;
-				// targetIndex = 0;
-
 				System.out.println(word);
 
 				// get arraylist of skill objects for a word
@@ -108,10 +105,6 @@ public class OutputLists {
 				mostRecentValue = Constants.INITIAL_SKILL_VALUE;
 				int i = 0;
 				int skillObjectListIndex = 1;
-				// System.out.println(word);
-				// System.out.println(Arrays.toString(skillObjectList.toArray()));
-				// for (int i = 0; i < student.getSentenceList().size() + 1;) {
-				// System.out.println("word= " + word);
 				wordToSkillValues.get(word).add(mostRecentValue);
 				while (i < (sentenceList.size()) && wordToSkillValues.get(word).size() <= sentenceList.size()) {
 					// System.out.println(skillObjectList.get(skillObjectListIndex).getSentence());
@@ -140,12 +133,112 @@ public class OutputLists {
 					}
 					// i = i + 1;
 				}
-				// System.out.println(word);
-				// System.out.println(Arrays.toString(wordToSkillValues.get(word).toArray()));
-				// System.out.println(wordToSkillValues.get(word).size());
 			}
 		}
 
+	}
+
+	private void createSkillList2(StudentLogData student, SkillSet skillSet, InitMaps initMaps) {
+		ArrayList<Skill> skillObjectList;
+		System.out.println("word list2=" + Arrays.toString(wordList.toArray()));
+		if (!(wordList.isEmpty()) || !(wordList == null)) {
+			for (int i = 0; i < wordList.size(); i++) {
+				// put word in map if not contains
+				if (!wordToSkillValues.keySet().contains(wordList.get(i))) {
+					wordToSkillValues.put(wordList.get(i), new ArrayList<Double>());
+				}
+			}
+			double mostRecentValue = Constants.INITIAL_SKILL_VALUE;
+			for (String word : skillSet.getSkillMap().keySet()) {
+				skillObjectList = skillSet.getSkillMap().get(word);
+				mostRecentValue = Constants.INITIAL_SKILL_VALUE;
+				int i = 0;
+				int skillObjectListIndex = 1;
+				wordToSkillValues.get(word).add(mostRecentValue);
+				while (i < (sentenceList.size()) && wordToSkillValues.get(word).size() <= sentenceList.size()) {
+					// System.out.println(skillObjectList.get(skillObjectListIndex).getSentence());
+					// System.out.println(student.getSentenceList().get(i));
+					if (skillObjectListIndex < skillObjectList.size()
+							&& skillObjectList.get(skillObjectListIndex).getSentence()
+									.equals(student.getSentenceList().get(i))) {
+						for (; skillObjectListIndex < skillObjectList.size(); skillObjectListIndex++) {
+							if (skillObjectListIndex < skillObjectList.size()
+									&& skillObjectList.get(skillObjectListIndex).getSentence()
+											.equals(student.getSentenceList().get(i))
+									&& !skillObjectList.get(skillObjectListIndex).getVerification().isEmpty()) {
+								mostRecentValue = skillObjectList.get(skillObjectListIndex).getSkillValue();
+								wordToSkillValues.get(word).add(mostRecentValue);
+								// skillObjectListIndex = skillObjectListIndex + 1;
+								i = i + 1;
+								// skillObjectListIndex = skillObjectListIndex + 1;
+								// System.out.println("Added most recent1 = " + mostRecentValue);
+							} else {
+								break;
+							}
+						}
+					} else {
+						wordToSkillValues.get(word).add(mostRecentValue);
+						i = i + 1;
+						// System.out.println("Added most recent2 = " + mostRecentValue);
+					}
+					// i = i + 1;
+				}
+			}
+		}
+	}
+
+	private void createSkillList3(StudentLogData student, SkillSet skillSet, InitMaps initMaps) {
+		ArrayList<Skill> skillObjectList;
+		System.out.println("word list2=" + Arrays.toString(wordList.toArray()));
+		if (!(wordList.isEmpty()) || !(wordList == null)) {
+			for (int i = 0; i < wordList.size(); i++) {
+				// put word in map if not contains
+				if (!wordToSkillValues.keySet().contains(wordList.get(i))) {
+					wordToSkillValues.put(wordList.get(i), new ArrayList<Double>());
+				}
+			}
+		}
+		double mostRecentValue = Constants.INITIAL_SKILL_VALUE;
+		for (String word : skillSet.getSkillMap().keySet()) {
+			skillObjectList = skillSet.getSkillMap().get(word);
+			mostRecentValue = Constants.INITIAL_SKILL_VALUE;
+			int i = 0;
+			int skillObjectListIndex = 1;
+			wordToSkillValues.get(word).add(mostRecentValue);
+			while (i < sentenceList.size()) {
+				// && wordToSkillValues.get(word).size() <= sentenceList.size()
+				// System.out.println(skillObjectList.get(skillObjectListIndex).getSentence());
+				// System.out.println(student.getSentenceList().get(i));
+				if (skillObjectListIndex < skillObjectList.size()
+						&& skillObjectList.get(skillObjectListIndex).getSentence()
+								.equals(student.getSentenceList().get(i))) {
+					for (; skillObjectListIndex < skillObjectList.size(); skillObjectListIndex++) {
+						if (skillObjectListIndex < skillObjectList.size()
+								&& skillObjectList.get(skillObjectListIndex).getSentence()
+										.equals(student.getSentenceList().get(i))) {
+							// && !skillObjectList.get(skillObjectListIndex).getVerification().isEmpty()
+							mostRecentValue = skillObjectList.get(skillObjectListIndex).getSkillValue();
+							wordToSkillValues.get(word).add(mostRecentValue);
+							// skillObjectListIndex = skillObjectListIndex + 1;
+							i = i + 1;
+							// skillObjectListIndex = skillObjectListIndex + 1;
+							// System.out.println("Added most recent1 = " + mostRecentValue + "for word " + word + " "
+							// + skillObjectList.get(skillObjectListIndex).getSentence() + " "
+							// + skillObjectList.get(skillObjectListIndex).getAction());
+						} else {
+							break;
+						}
+					}
+				} else {
+					wordToSkillValues.get(word).add(mostRecentValue);
+					i = i + 1;
+					// System.out.println("Added most recent2 = " + mostRecentValue);
+				}
+				// i = i + 1;
+			}
+		}
+		// System.out.println(wordToSkillValues);
+		// }
 	}
 
 	public ArrayList<String> getWordList() {
