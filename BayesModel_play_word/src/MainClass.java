@@ -82,11 +82,14 @@ public class MainClass {
 		}
 		skillSet.setSkillMap(skillMap);
 		// calculate
-		KnowledgeTracer2 k = new KnowledgeTracer2();
-		SkillSet skillSet1 = k.calculateSkill(studentLogData, skillSet, initMaps);
+		// KnowledgeTracer3 k = new KnowledgeTracer3();
+		// SkillSet skillSet1 = k.calculateSkill(studentLogData, skillSet, initMaps);
+
+		KnowledgeTracer5 k2 = new KnowledgeTracer5();
+		SkillSet skillSet2 = k2.calculateSkill(studentLogData, skillSet, initMaps);
 
 		OutputLists outputLists = new OutputLists();
-		outputLists.createLists(studentLogData, skillSet1, initMaps);
+		outputLists.createLists(studentLogData, skillSet2, initMaps);
 
 		WriteOutput3 writeOutput = new WriteOutput3();
 		writeOutput.writeCSV(outputLists, studentLogData);
