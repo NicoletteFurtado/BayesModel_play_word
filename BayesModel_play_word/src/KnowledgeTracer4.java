@@ -132,6 +132,7 @@ public class KnowledgeTracer4 {
 			ArrayList<Integer> tempUserStepList = userStepMap.get(sentence);
 			ArrayList<String> tempInputDataList = inputDataMap.get(sentence);
 			ArrayList<String> tempVerificationList = verificationMap.get(sentence);
+			System.out.println("inputdata=" + Arrays.toString(tempInputDataList.toArray()));
 			// go through each action
 			for (int i = 0; i < tempActionList.size(); i++) {
 				// for move
