@@ -105,6 +105,13 @@ public class KnowledgeTracer5 {
 		}
 		evaluateSentence(actionMap, sentenceMap, userStepMap, inputDataMap, verificationMap, initMaps, studentLogData);
 		skillSet1.setSkillMap(skillMap);
+		for (String word : skillMap.keySet()) {
+			System.out.println(word);
+			for (int i = 0; i < skillMap.get(word).size(); i++)
+				System.out.println(skillMap.get(word).get(i).getSkillValue() + " "
+						+ skillMap.get(word).get(i).getSentence() + " " + skillMap.get(word).get(i).getAction());
+
+		}
 		return skillSet1;
 	}
 
@@ -135,6 +142,8 @@ public class KnowledgeTracer5 {
 			ArrayList<String> tempVerificationList = verificationMap.get(sentence);
 			// go through each action
 			for (int i = 0; i < tempActionList.size(); i++) {
+				HashMap<String, Boolean> wordToVerif = checkIncorrectSkill2(student, initMaps, sentence,
+						tempInputDataList.get(i), tempUserStepList.get(i));
 				// for move
 				// just in case computer move actions get considered
 				if ((tempActionList.get(i).equals(Constants.MOVE_TO_HOTSPOT) || tempActionList.get(i).equals(
@@ -145,8 +154,8 @@ public class KnowledgeTracer5 {
 					if (!prevInputData.equals(tempInputDataList.get(i))) {
 						System.out.println("prevInputdata = " + prevInputData);
 						// || prevAction.equals(Constants.PLAY_WORD)
-						HashMap<String, Boolean> wordToVerif = checkIncorrectSkill2(student, initMaps, sentence,
-								tempInputDataList.get(i), tempUserStepList.get(i));
+						// HashMap<String, Boolean> wordToVerif = checkIncorrectSkill2(student, initMaps, sentence,
+						// tempInputDataList.get(i), tempUserStepList.get(i));
 						if (tempVerificationList.get(i).equals(Constants.CORRECT)) {
 							System.err.println("wordToVerif correct" + wordToVerif);
 							for (String word : wordToVerif.keySet()) {
@@ -216,22 +225,21 @@ public class KnowledgeTracer5 {
 
 				} else if (tempActionList.get(i).equals(Constants.PLAY_WORD)) {
 					// for play word
-					// playWordList.add(tempInputDataList.get(i).trim());
-					// System.out.println("added word " + tempInputDataList.get(i) + " for setnence " + sentence);
-					// System.err.println(" incorrect incorrect1" + Arrays.toString(playWordList.toArray()));
 					// also treat as incorrect, but with regular probabilities
-					if (wordToValueMap.keySet().contains(tempInputDataList.get(i).trim())) {
-						playWordSet.add(tempInputDataList.get(i).trim());
-						System.out.println("added word " + tempInputDataList.get(i) + " for setnence " + sentence);
-						String wordInMap = tempInputDataList.get(i).trim();
-						prevSkillValue = wordToValueMap.get(wordInMap).getSkillValue();
-						skillEvaluated = this.calcIncorrect(student, prevSkillValue);
-						System.out.println("in incorrect incorrect " + wordInMap);
-						newSkill = calcNewSkillValue(student, skillEvaluated);
-						// updateSkills(studentLogData, initMaps, newSkill, word, i);
-						updateSkills(student, newSkill, wordInMap, tempVerificationList.get(i), sentence,
-								tempActionList.get(i), tempUserStepList.get(i).intValue());
-						System.out.println("updated incorrect");
+					for (String word : wordToVerif.keySet()) {
+						if (wordToValueMap.keySet().contains(word)) {
+							playWordSet.add(word);
+							String wordInMap = word;
+							System.out.println("wordInMap=" + wordInMap);
+							prevSkillValue = wordToValueMap.get(wordInMap).getSkillValue();
+							skillEvaluated = this.calcIncorrect(student, prevSkillValue);
+							System.out.println("in incorrect play word " + wordInMap);
+							newSkill = calcNewSkillValue(student, skillEvaluated);
+							// updateSkills(studentLogData, initMaps, newSkill, word, i);
+							updateSkills(student, newSkill, wordInMap, tempVerificationList.get(i), sentence,
+									tempActionList.get(i), tempUserStepList.get(i).intValue());
+							System.out.println("updated incorrect play word");
+						}
 					}
 				}
 				// prevUserStep = student.getUserStep().get(i).intValue();
@@ -258,14 +266,14 @@ public class KnowledgeTracer5 {
 	private double calcCorrectPlayWord(StudentLogData student, double prevSkillValue) {
 
 		System.out.println("in correct play word");
-		return (prevSkillValue * (1 - student.getSlip()))
-				/ (prevSkillValue * (1 - student.getSlip()) + (1 - prevSkillValue) * student.getGuess());
+		return (prevSkillValue * (1 - student.getSlip2()))
+				/ (prevSkillValue * (1 - student.getSlip2()) + (1 - prevSkillValue) * student.getGuess2());
 	}
 
 	private double calcIncorrectPlayWord(StudentLogData student, double prevSkillValue) {
 		System.out.println("in incorrect play word");
-		return (prevSkillValue * student.getSlip())
-				/ ((student.getSlip() * prevSkillValue) + ((1 - student.getGuess()) * (1 - prevSkillValue)));
+		return (prevSkillValue * student.getSlip2())
+				/ ((student.getSlip2() * prevSkillValue) + ((1 - student.getGuess2()) * (1 - prevSkillValue)));
 
 	}
 
@@ -299,65 +307,70 @@ public class KnowledgeTracer5 {
 		// System.err.println("entreed check incorrect 2");
 		// String objectsMoved[] = student.getInputData().get(count).split(Constants.STUDENT_INPUT_DATA_SEPARATOR);
 		String objectsMoved[] = wordsMoved.split(Constants.STUDENT_INPUT_DATA_SEPARATOR);
-		System.err.println("objects moved " + Arrays.toString(objectsMoved));
-		// String currSentence = student.getSentenceList().get(count);
-		// List of correct words for that step
-		System.out.println("userStep " + userStep);
 		ArrayList<String> actionWords = initMaps.getSentenceToActions().get(AnalysisUtil.convertStringToKey(sentence))
 				.get(userStep - 1);
-		// student.getUserStep().get(userStep) - 1
-		System.err.println("actionWords " + Arrays.toString(actionWords.toArray()));
-		// String currSentence = student.getSentenceList().get(count);
 		HashMap<String, Boolean> wordToVerif = new HashMap<String, Boolean>();
-		// add syntax to wordToVerif defalut false
-		wordToVerif.put(Constants.SYNTAX, false);
-		// case for pen
-		for (int i = 0; i < objectsMoved.length; i++) {
-			if (objectsMoved[i].contains("pen1") || objectsMoved[i].contains("pen2")
-					|| objectsMoved[i].contains("pen3") || objectsMoved[i].contains("pen4")) {
-				objectsMoved[i] = "pen";
-			} else if (objectsMoved[i].contains("corralDoor")) {
-				objectsMoved[i] = "corral";
-			} else if (objectsMoved[i].contains("pumpkinPatch") || objectsMoved[i].contains("pumpkin")) {
-				objectsMoved[i] = "pumpkins";
-			} else if (objectsMoved[i].contains("farmerFall")) {
-				objectsMoved[i] = "farmer";
-			}
-		}
-		// get the action for this step
-		for (int i = 0; i < actionWords.size(); i++) {
-			if (actionWords.get(i).equalsIgnoreCase(objectsMoved[i])) {
-				// System.out.println("action word=" + actionWords.get(i));
-				// System.out.println("ojbjeys moved=" + objectsMoved[i]);
-				wordToVerif.put(actionWords.get(i), true);
-				// understood everything about the sentence including syntax
-				// wordToVerif.put(Constants.SYNTAX, true);
-			} else {
-				wordToVerif.put(actionWords.get(i), false);
-				// if (actionWords.contains(objectsMoved[i])) {
-				// if the students moved the correct words in the wrong order
-				// wordToVerif.put(Constants.SYNTAX, true);
-				// }
-			}
-		}
-		// check if all words in actionWords are present in objectsMoved
-		int flag = 99;
-		for (int i = 0; i < objectsMoved.length; i++) {
-			if (actionWords.contains(objectsMoved[i])) {
-				flag = 1;
-				System.out.println("Set flag true for " + objectsMoved[i]);
-			} else {
-				flag = 0;
-				System.out.println("Set flag false for " + objectsMoved[i]);
-				break;
-			}
-		}
-		if (flag == 1)
-			wordToVerif.put(Constants.SYNTAX, true);
-		else if (flag == 0)
+		if (objectsMoved.length == 1) {
+			wordToVerif.put(objectsMoved[0].trim(), false);
+		} else if (objectsMoved.length > 1) {
+			System.err.println("objects moved " + Arrays.toString(objectsMoved));
+			// String currSentence = student.getSentenceList().get(count);
+			// List of correct words for that step
+			System.out.println("userStep " + userStep);
+			// ArrayList<String> actionWords = initMaps.getSentenceToActions()
+			// .get(AnalysisUtil.convertStringToKey(sentence)).get(userStep - 1);
+			// student.getUserStep().get(userStep) - 1
+			System.err.println("actionWords " + Arrays.toString(actionWords.toArray()));
+			// String currSentence = student.getSentenceList().get(count);
+			// HashMap<String, Boolean> wordToVerif = new HashMap<String, Boolean>();
+			// add syntax to wordToVerif defalut false
 			wordToVerif.put(Constants.SYNTAX, false);
-		else
-			System.err.println("flag=" + flag);
+			// case for pen
+			for (int i = 0; i < objectsMoved.length; i++) {
+				if (objectsMoved[i].contains("pen1") || objectsMoved[i].contains("pen2")
+						|| objectsMoved[i].contains("pen3") || objectsMoved[i].contains("pen4")) {
+					objectsMoved[i] = "pen";
+				} else if (objectsMoved[i].contains("corralDoor")) {
+					objectsMoved[i] = "corral";
+				} else if (objectsMoved[i].contains("pumpkinPatch") || objectsMoved[i].contains("pumpkin")) {
+					objectsMoved[i] = "pumpkins";
+				} else if (objectsMoved[i].contains("farmerFall")) {
+					objectsMoved[i] = "farmer";
+				}
+			}
+			// get the action for this step
+			for (int i = 0; i < actionWords.size(); i++) {
+				if (actionWords.get(i).equalsIgnoreCase(objectsMoved[i])) {
+					// System.out.println("action word=" + actionWords.get(i));
+					// System.out.println("ojbjeys moved=" + objectsMoved[i]);
+					wordToVerif.put(actionWords.get(i), true);
+					// understood everything about the sentence including syntax
+					// wordToVerif.put(Constants.SYNTAX, true);
+				} else {
+					wordToVerif.put(actionWords.get(i), false);
+					// if (actionWords.contains(objectsMoved[i])) {
+					// if the students moved the correct words in the wrong order
+					// wordToVerif.put(Constants.SYNTAX, true);
+					// }
+				}
+			}
+			// check if all words in actionWords are present in objectsMoved
+			int flag = 99;
+			for (int i = 0; i < objectsMoved.length; i++) {
+				if (actionWords.contains(objectsMoved[i])) {
+					flag = 1;
+				} else {
+					flag = 0;
+					break;
+				}
+			}
+			if (flag == 1)
+				wordToVerif.put(Constants.SYNTAX, true);
+			else if (flag == 0)
+				wordToVerif.put(Constants.SYNTAX, false);
+			else
+				System.err.println("flag=" + flag);
+		}
 		return wordToVerif;
 	}
 }
