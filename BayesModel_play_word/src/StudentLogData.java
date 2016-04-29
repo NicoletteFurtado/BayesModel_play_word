@@ -7,6 +7,7 @@ public class StudentLogData {
 	private ArrayList<Integer> userStep;
 	private ArrayList<String> inputData;
 	private ArrayList<String> userStepRepeated;
+	private ArrayList<String> userList;
 
 	// ////
 	private double guess = 0.1; // 0.25 //0.6
@@ -111,6 +112,14 @@ public class StudentLogData {
 
 	public void setSlip2(double slip2) {
 		this.slip2 = slip2;
+	}
+
+	public ArrayList<String> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(ArrayList<String> userList) {
+		this.userList = userList;
 	}
 
 }
