@@ -9,10 +9,11 @@ public class ErrorStatistics {
 
 	private String folder = "C:\\Users\\Nicolette\\OneDrive\\Documents\\EMBRACE\\Analysis\\With user step\\log data by student\\log data with play word";
 	private String inputDataFolder = "inputdata/";
-	private HashMap<String, Integer> wordToHelpRequests;
-	private HashMap<String, Integer> wordToErrors;
+	private HashMap<String, Integer> wordToHelpRequests = new HashMap<String, Integer>();
+	private HashMap<String, Integer> wordToErrors = new HashMap<String, Integer>();
 	private StudentLogData student;
 	private StringBuilder sb = new StringBuilder("");
+	private File resultFile;
 	private static InitMaps initMaps;
 
 	public static void main(String[] args) {
@@ -25,21 +26,22 @@ public class ErrorStatistics {
 		File dir = new File(folder);
 		File[] directoryListing = dir.listFiles();
 		if (directoryListing != null) {
-			File resultFile = new File(dir.getPath() + "\\Error_Statistics.csv");
+			File resultFile1 = new File(dir.getPath() + "\\Error_Statistics_help_requests.csv");
+			File resultFile2 = new File(dir.getPath() + "\\Error_Statistics_errors_all.csv");
 			try {
-				FileUtils.writeStringToFile(resultFile, "Word,Help Requests,Errors\n", true);
+				FileUtils.writeStringToFile(resultFile1, "Word,Help Requests\n", true);
 				for (File child : directoryListing) {
 					String fileName = child.getName();
 					if (fileName.contains("log_data")) {
 						File logfile = new File(dir.getPath() + "\\" + fileName);
 						if (logfile.exists()) {
-							analyzeLogFile(logfile, resultFile);
+							analyzeLogFile(logfile, resultFile1);
 						} else {
 							System.out.println("=======> Log file does not exist..." + logfile.getName());
 						}
 					}
 				}
-				FileUtils.writeStringToFile(resultFile, sb.toString(), true);
+				FileUtils.writeStringToFile(resultFile1, sb.toString(), true);
 			} catch (IOException ie) {
 				System.out.println(ie.getMessage());
 			}
@@ -54,15 +56,10 @@ public class ErrorStatistics {
 			student = readFiles.readLogData(logFile.getCanonicalPath().toString());
 			String studentId = logFile.getName().split("_")[2].split("\\.")[0];
 			readInputData(readFiles, studentId);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void readStudentData(File filename) {
-		ReadFiles readFiles = new ReadFiles();
-		try {
-			student = readFiles.readLogData(filename.getCanonicalPath().toString());
+			updateHelpRequests();
+			sb.append(studentId + "," + wordToHelpRequests.toString() + "\n");
+			wordToHelpRequests = new HashMap<String, Integer>();
+			student = new StudentLogData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -106,7 +103,9 @@ public class ErrorStatistics {
 			} else if (inputData.contains("trophyS")) {
 				inputData = "trophy";
 			} else if (inputData.contains("healthyS")) {
-				inputData = "healthy	";
+				inputData = "healthy";
+			} else if (inputData.contains("combedS")) {
+				inputData = "combed";
 			}
 		}
 	}
@@ -114,5 +113,45 @@ public class ErrorStatistics {
 	private static void readStoryFiles() {
 		ReadFiles readFiles = new ReadFiles();
 		initMaps = readFiles.readPropertiesFile(Constants.WORDS_FILE, Constants.ACTION_FILE);
+	}
+
+	private void updateHelpRequests() {
+		for (String inputData : student.getInputData()) {
+			if (!inputData.contains(" ")) {
+				addToMap(wordToHelpRequests, inputData);
+			}
+		}
+	}
+
+	private void updateErrors() {
+		String currSentence = "";
+		String currUserStep = "";
+		String currInputData = "";
+		ArrayList<String> wordsInSentence;
+		ArrayList<String> wordsInAction;
+		String[] objectsMoved;
+		// go through all actions
+		for (int i = 0; i < student.getActionList().size(); i++) {
+			if (student.getVerificationList().get(i).equals(Constants.INCORRECT)) {
+				// check sentence
+				currSentence = student.getSentenceList().get(i);
+				currInputData = student.getInputData().get(i);
+				objectsMoved = currInputData.split(Constants.STUDENT_INPUT_DATA_SEPARATOR);
+				wordsInSentence = initMaps.getSentenceToWords().get(AnalysisUtil.convertStringToKey(currSentence));
+				wordsInAction = initMaps.getSentenceToActions().get(AnalysisUtil.convertStringToKey(currSentence))
+						.get(Integer.parseInt(currUserStep) - 1);
+				// check words
+
+				// update hashmap
+			}
+		}
+	}
+
+	private void addToMap(HashMap<String, Integer> map, String key) {
+		if (map.keySet().contains(key)) {
+			map.put(key, map.get(key) + 1);
+		} else {
+			map.put(key, 1);
+		}
 	}
 }
